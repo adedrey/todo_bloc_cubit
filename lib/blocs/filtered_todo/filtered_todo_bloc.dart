@@ -12,68 +12,41 @@ part 'filtered_todo_event.dart';
 part 'filtered_todo_state.dart';
 
 class FilteredTodoBloc extends Bloc<FilteredTodoEvent, FilteredTodoState> {
-  late final StreamSubscription todoListBlocStreamSubscription;
-  late final StreamSubscription filteredTodoBlocStreamSubscription;
-  late final StreamSubscription todoSearchBlocStreamSubscription;
-  final TodoListBloc todoListBloc;
-  final TodoFilterBloc todoFilterBloc;
-  final TodoSearchBloc todoSearchBloc;
   final List<Todo> initialTodos;
   FilteredTodoBloc({
-    required this.todoListBloc,
-    required this.todoFilterBloc,
-    required this.todoSearchBloc,
     required this.initialTodos,
   }) : super(FilteredTodoState(filteredTodoList: initialTodos)) {
-    todoListBlocStreamSubscription = todoListBloc.stream
-        .listen((TodoListState todoListState) => setFilteredTodos());
-    filteredTodoBlocStreamSubscription = todoFilterBloc.stream
-        .listen((TodoFilterState todoFilterState) => setFilteredTodos());
-    todoSearchBlocStreamSubscription = todoSearchBloc.stream
-        .listen((TodoSearchState todoSearchState) => setFilteredTodos());
-    on<PerformFilteringEvent>((event, emit) {
-      emit(state.copyWith(filteredTodoList: event.filteredList));
-    });
+    on<PerformFilteringEvent>(_performFilteringEvent);
   }
 
-  void setFilteredTodos() {
+  void _performFilteringEvent(
+      PerformFilteringEvent event, Emitter<FilteredTodoState> emit) {
     List<Todo> _filteredTodoLists;
 
-    switch (todoFilterBloc.state.filter) {
+    switch (event.todoFilterBloc) {
       case Filter.active:
-        _filteredTodoLists = todoListBloc.state.todos
-            .where((Todo todo) => !todo.completed)
-            .toList();
+        _filteredTodoLists =
+            event.todoListBloc.where((Todo todo) => !todo.completed).toList();
         break;
       case Filter.completed:
-        _filteredTodoLists = todoListBloc.state.todos
-            .where((Todo todo) => todo.completed)
-            .toList();
+        _filteredTodoLists =
+            event.todoListBloc.where((Todo todo) => todo.completed).toList();
         break;
       case Filter.all:
       default:
-        _filteredTodoLists = todoListBloc.state.todos;
+        _filteredTodoLists = event.todoListBloc;
         break;
     }
 
-    if (todoSearchBloc.state.searchedWord.isNotEmpty) {
+    if (event.todoSearchBloc.isNotEmpty) {
       _filteredTodoLists = _filteredTodoLists
           .where(
             (Todo todo) => todo.desc.toLowerCase().contains(
-                  todoSearchBloc.state.searchedWord.toLowerCase(),
+                  event.todoSearchBloc.toLowerCase(),
                 ),
           )
           .toList();
     }
-    add(PerformFilteringEvent(filteredList: _filteredTodoLists));
-  }
-
-  @override
-  Future<void> close() {
-    // TODO: implement close
-    todoListBlocStreamSubscription.cancel();
-    todoSearchBlocStreamSubscription.cancel();
-    filteredTodoBlocStreamSubscription.cancel();
-    return super.close();
+    emit(state.copyWith(filteredTodoList: _filteredTodoLists));
   }
 }

@@ -9,14 +9,19 @@ abstract class FilteredTodoEvent extends Equatable {
 }
 
 class PerformFilteringEvent extends FilteredTodoEvent {
-  final List<Todo> filteredList;
+  final List<Todo> todoListBloc;
+  final Filter todoFilterBloc;
+  final String todoSearchBloc;
   PerformFilteringEvent({
-    required this.filteredList,
+    required this.todoListBloc,
+    required this.todoFilterBloc,
+    required this.todoSearchBloc,
   });
 
   @override
-  List<Object> get props => [filteredList];
+  List<Object> get props => [todoFilterBloc, todoListBloc, todoSearchBloc];
 
   @override
-  String toString() => 'PerformFilteringEvent(filteredList: $filteredList)';
+  String toString() =>
+      'PerformFilteringEvent(todoListBloc: $todoListBloc, todoFilterBloc: $todoFilterBloc, todoSearchBloc: $todoSearchBloc)';
 }
