@@ -17,12 +17,19 @@ class TodoHeader extends StatelessWidget {
           "TODO",
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
-        Text(
-          "${context.watch<ActiveTodoCountCubit>().state.activeTodoCount} items left",
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
+        BlocListener<TodoListCubit, TodoListState>(
+          listener: (context, state) {
+            context.read<ActiveTodoCountCubit>().modifyActiveTodoCount(
+                  currentTodos: state.todos,
+                );
+          },
+          child: Text(
+            "${context.watch<ActiveTodoCountCubit>().state.activeTodoCount} items left",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],

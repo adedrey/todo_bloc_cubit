@@ -28,15 +28,11 @@ class MyApp extends StatelessWidget {
           create: (context) => ActiveTodoCountCubit(
             initialActiveTodoCount:
                 context.read<TodoListCubit>().state.todos.length,
-            todoListCubit: context.read<TodoListCubit>(),
           ),
         ),
         BlocProvider<FilteredTodoCubit>(
           create: (context) => FilteredTodoCubit(
             initialTodos: context.read<TodoListCubit>().state.todos,
-            todoFilterCubit: context.read<TodoFilterCubit>(),
-            todoListCubit: context.read<TodoListCubit>(),
-            todoSearchCubit: context.read<TodoSearchCubit>(),
           ),
         ),
       ],
