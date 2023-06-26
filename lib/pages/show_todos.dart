@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_bloc/cubits/cubits.dart';
+
+import '../blocs/blocs.dart';
 
 class ShowTodos extends StatelessWidget {
   const ShowTodos({super.key});
@@ -10,17 +11,17 @@ class ShowTodos extends StatelessWidget {
     return ListView.separated(
       itemBuilder: (context, index) {
         final todo =
-            context.watch<FilteredTodoCubit>().state.filteredTodoList[index];
+            context.watch<FilteredTodoBloc>().state.filteredTodoList[index];
         return Dismissible(
           onDismissed: (direction) {
-            context.read<TodoListCubit>().removeTodo(id: todo.id);
+            context.read<TodoListBloc>().add(RemoveTaskEvent(id: todo.id));
           },
           key: ValueKey(todo.id),
           child: ListTile(
             leading: Checkbox(
               value: todo.completed,
               onChanged: (value) {
-                context.read<TodoListCubit>().toggleTodo(id: todo.id);
+                context.read<TodoListBloc>().add(ToggleTaskEvent(id: todo.id));
               },
             ),
             title: Text(todo.desc),
@@ -31,7 +32,7 @@ class ShowTodos extends StatelessWidget {
         color: Colors.black,
       ),
       itemCount:
-          context.watch<FilteredTodoCubit>().state.filteredTodoList.length,
+          context.watch<FilteredTodoBloc>().state.filteredTodoList.length,
     );
   }
 }

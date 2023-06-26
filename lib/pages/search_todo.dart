@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_bloc/blocs/todo_filter/todo_filter_bloc.dart';
 import 'package:todo_bloc/cubits/cubits.dart';
 
+import '../blocs/todo_search/todo_search_bloc.dart';
 import '../models/todo_model.dart';
 import '../utils/debounce.dart';
 
@@ -41,8 +43,8 @@ class _SearchTodoState extends State<SearchTodo> {
               if (todoDesc != null) {
                 debounce.run(
                   () => context
-                      .read<TodoSearchCubit>()
-                      .searchItem(searchKey: todoController.text),
+                      .read<TodoSearchBloc>()
+                      .add(SearchTaskEvent(searchedWord: todoController.text)),
                 );
               }
             },
@@ -66,7 +68,7 @@ class _SearchTodoState extends State<SearchTodo> {
   Widget _filteredTab({required Filter filter}) {
     return TextButton(
       onPressed: () {
-        context.read<TodoFilterCubit>().changeFilter(newFilter: filter);
+        context.read<TodoFilterBloc>().add(ChangeFilterEvent(filter: filter));
       },
       child: Text(
         filter == Filter.all
@@ -83,7 +85,7 @@ class _SearchTodoState extends State<SearchTodo> {
   }
 
   Color _colorFiltered({required Filter filter}) {
-    return context.watch<TodoFilterCubit>().state.filter == filter
+    return context.watch<TodoFilterBloc>().state.filter == filter
         ? Colors.blue
         : Colors.black;
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_bloc/blocs/todo_list/todo_list_bloc.dart';
 import 'package:todo_bloc/cubits/cubits.dart';
 
 class CreateTodo extends StatefulWidget {
@@ -33,8 +34,8 @@ class _CreateTodoState extends State<CreateTodo> {
         onSubmitted: (String? todoDesc) {
           if (todoDesc != null && todoController.text.isNotEmpty) {
             context
-                .read<TodoListCubit>()
-                .addTodo(todoDesc: todoController.text);
+                .read<TodoListBloc>()
+                .add(AddTaskEvent(desc: todoController.text));
             todoController.clear();
           }
         },
