@@ -16,7 +16,6 @@ class SearchTodo extends StatefulWidget {
 
 class _SearchTodoState extends State<SearchTodo> {
   final TextEditingController todoController = TextEditingController();
-  final Debounce debounce = Debounce();
 
   @override
   void dispose() {
@@ -41,11 +40,9 @@ class _SearchTodoState extends State<SearchTodo> {
             ),
             onChanged: (String? todoDesc) {
               if (todoDesc != null) {
-                debounce.run(
-                  () => context
-                      .read<TodoSearchBloc>()
-                      .add(SearchTaskEvent(searchedWord: todoController.text)),
-                );
+                context
+                    .read<TodoSearchBloc>()
+                    .add(SearchTaskEvent(searchedWord: todoController.text));
               }
             },
           ),
